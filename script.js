@@ -4,7 +4,8 @@ const game = {
   wall: document.querySelector(".animated-wall"),
   timer: document.querySelector(".timer"),
   timeBar: document.querySelector(".timebar"),
-  countdownClock: document.querySelector('.countdownClock'),
+  countdownWrapper: document.querySelector('.countdownWrapper'),
+  countdownTime: document.querySelector('.countdownTime'),
   gridNodes: "",
   loop: "",
   root: document.documentElement,
@@ -31,14 +32,14 @@ const game = {
   },
   sound: {
     file: "warhorn.mp3",
-    volume: 1,
+    volume: 0.1,
   },
   safeZoneWidth: [20, 10, 5, 2],
   centerSelector: ".grid-item-2-2",
   gameState: "paused", // started || paused || ended
   zoneTarget: [],
   time: {
-    total: 1, // in minutes
+    total: 3, // in minutes
     current: 0, // in milliseconds
     circleClosing: 2000, // in milliseconds
     circleDelay: 2000, // in milliseconds
@@ -98,9 +99,6 @@ let avatar = document.createElement("div");
 avatar.style.width = game.avatar.squareSize + "px";
 avatar.style.height = game.avatar.squareSize + "px";
 avatar.style.backgroundColor = game.avatar.color;
-
-// const wall = document.createElement("div");
-// wall.classList.add("animated-wall");
 
 function makeGrid(rows, cols) {
   game.container.style.setProperty("--grid-rows", rows);
@@ -176,13 +174,13 @@ function gameTimer() {
 function updateMapState() {
   let state = game.mapState;
   if (game.time.current == game.time.startTimes[8]) { state = "end" }
-  if (game.time.current == game.time.startTimes[7]) { state = "zone 4"; handleCirclePlacement(game.zoneTarget[game.clickCount]); }
+  if (game.time.current == game.time.startTimes[7]) { state = "zone 4"; handleCirclePlacement(game.zoneTarget[game.clickCount]); countdownClock();}
   if (game.time.current == game.time.startTimes[6]) { state = "idle 4"; game.f.increaseClick(); }
-  if (game.time.current == game.time.startTimes[5]) { state = "zone 3"; handleCirclePlacement(game.zoneTarget[game.clickCount]); }
+  if (game.time.current == game.time.startTimes[5]) { state = "zone 3"; handleCirclePlacement(game.zoneTarget[game.clickCount]); countdownClock();}
   if (game.time.current == game.time.startTimes[4]) { state = "idle 3"; game.f.increaseClick(); }
-  if (game.time.current == game.time.startTimes[3]) { state = "zone 2"; handleCirclePlacement(game.zoneTarget[game.clickCount]);}
+  if (game.time.current == game.time.startTimes[3]) { state = "zone 2"; handleCirclePlacement(game.zoneTarget[game.clickCount]); countdownClock();}
   if (game.time.current == game.time.startTimes[2]) { state = "idle 2"; game.f.increaseClick(); }
-  if (game.time.current == game.time.startTimes[1]) { state = "zone 1"; handleCirclePlacement(game.zoneTarget[game.clickCount]); }
+  if (game.time.current == game.time.startTimes[1]) { state = "zone 1"; handleCirclePlacement(game.zoneTarget[game.clickCount]); countdownClock(); }
   if (game.time.current == game.time.startTimes[0]) { state = "idle 1"  }
   
   game.mapState = state;
@@ -198,7 +196,29 @@ function timelineGen() {
 }
 
 function countdownClock() {
+  let countdownSeconds = (game.time.circleDelay / 1000 | 0)
 
+  var timer = new CountDownTimer(countdownSeconds),
+      timeObj = CountDownTimer.parse(countdownSeconds);
+  
+  formatClock(timeObj.minutes, timeObj.seconds);
+
+  game.countdownWrapper.classList.add("show");
+  timer.onTick(formatClock).onTick(removeClock).start();
+}
+
+function removeClock() {
+  if (this.expired()) {
+    setTimeout(() => {
+      game.countdownWrapper.classList.remove('show')
+    }, 1000);
+  }
+}
+
+function formatClock(minutes, seconds) {
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+  game.countdownTime.textContent = `${minutes}:${seconds}`;
 }
 
 function handleKey(e) {
