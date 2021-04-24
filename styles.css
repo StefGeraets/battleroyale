@@ -1,0 +1,137 @@
+:root {
+  --grid-cols: 1;
+  --grid-rows: 1;
+  --cell-width: 32px;
+  --closing-time: 5s;
+  --circle-delay: 1s;
+  --circle-width: 20;
+  /* --circle-width: calc(var(--initial-circle-width) * var(--cell-width)); */
+  /* --circle-height: calc(var(--initial-circle-width) * var(--cell-width)); */
+  --start-width: 250vw;
+  --start-top: 0;
+  --start-left: 0;
+  --end-top: 0;
+  --end-left: 0;
+  --game-time: 0;
+  --countdown-height: 1vh;
+}
+
+body {
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+.map {
+  background: rgb(7,89,133);
+  background: radial-gradient(circle, rgba(7,89,133,1) 0%, rgba(12,74,110,1) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+.container {
+  display: grid;
+  grid-template-rows: repeat(var(--grid-rows), var(--cell-width));
+  grid-template-columns: repeat(var(--grid-cols), var(--cell-width));
+  margin: 0 auto;
+  background-image: url("map/island.png");
+}
+
+.grid-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 15%);
+  text-align: center;
+}
+
+.grid-item.selected:before {
+  content: "";
+  display: block;
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 50%);
+  border-radius: 600px;
+  width: calc(var(--circle-width) * var(--cell-width));
+  height: calc(var(--circle-width) * var(--cell-width));
+  pointer-events: none;
+}
+
+.animated-wall {
+  pointer-events: none;
+  display: none;
+  position: absolute;
+  border: 2px solid rgba(132, 204, 22, 75%);
+  box-sizing: content-box;
+  border-radius: 100%;
+  width: 150vw;
+  height: 150vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 0 250px 40vw rgb(250, 204, 21, 50%);
+  z-index: 1;
+}
+
+.closeCircle {
+  display: block;
+  width: var(--start-width);
+  height: var(--start-width);
+  top: var(--start-top);
+  left: var(--start-left);
+  animation: closeInitialCircle var(--closing-time) linear var(--circle-delay) forwards;
+}
+
+@keyframes closeInitialCircle {
+  from {
+    width: var(--start-width);
+    height: var(--start-width);
+    top: var(--start-top);
+    left: var(--start-left);
+  }
+  to {
+    width: calc(var(--circle-width) * var(--cell-width));
+    height: calc(var(--circle-width) * var(--cell-width));
+    top: var(--end-top);
+    left: var(--end-left);
+  }
+}
+
+.timebar {
+  width: 20px;
+  height: 100%;
+  background: rgba(255,255,255,20%);
+  position: relative;
+}
+
+.timer {
+  width: 20px;
+  height: 1px;
+  position: absolute;
+  top: 0;
+  background: #000;
+  animation: gameTimer var(--game-time) linear forwards;
+  animation-play-state: paused;
+}
+
+.timebar .timeblock:nth-child(3) {
+  border-top: 1px solid blue;
+}
+
+.timebar .timeblock:nth-child(2n+4) {
+  background: red;
+  border-top: var(--countdown-height) solid green;
+}
+
+@keyframes gameTimer {
+  from {
+    top: 0;
+  }
+  to {
+    top: 100%;
+  }
+}
