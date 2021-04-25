@@ -6,6 +6,7 @@ const game = {
   timeBar: document.querySelector(".timebar"),
   countdownWrapper: document.querySelector('.countdownWrapper'),
   countdownTime: document.querySelector('.countdownTime'),
+  settings: document.querySelector('.settings'),
   gridNodes: "",
   loop: "",
   root: document.documentElement,
@@ -18,6 +19,7 @@ const game = {
   },
   clickCount: 0,
   avatar: {
+    element: document.createElement("div"),
     squareSize: 24,
     color: "#ff0000",
     position: {
@@ -31,7 +33,8 @@ const game = {
     cellSize: 32
   },
   sound: {
-    file: "warhorn.mp3",
+    closing: "warhorn.mp3",
+    ring: "trumpet.mp3",
     volume: 0.1,
   },
   safeZoneWidth: [20, 10, 5, 2],
@@ -39,7 +42,7 @@ const game = {
   gameState: "paused", // started || paused || ended
   zoneTarget: [],
   time: {
-    total: 3, // in minutes
+    total: 1, // in minutes
     current: 0, // in milliseconds
     circleClosing: 2000, // in milliseconds
     circleDelay: 2000, // in milliseconds
@@ -52,6 +55,7 @@ const game = {
     startTimes: [],
   },
   mapState: "start",
+  settingWindow: "dmSettings",
   f: {
     increaseClick: function () { game.clickCount += 1},
   },
@@ -92,18 +96,10 @@ function addTimesInMilliseconds() {
   game.time.circleDelay = game.time.countdown * onePerc;
 }
 
-
-addTimesInMilliseconds();
-
-let avatar = document.createElement("div");
-avatar.style.width = game.avatar.squareSize + "px";
-avatar.style.height = game.avatar.squareSize + "px";
-avatar.style.backgroundColor = game.avatar.color;
-
 function makeGrid(rows, cols) {
   game.container.style.setProperty("--grid-rows", rows);
   game.container.style.setProperty("--grid-cols", cols);
-  game.container.style.setProperty("--cell-width", game.grid.cellSize + "px");
+  game.root.style.setProperty("--cell-width", game.grid.cellSize + "px");
 
   let x = 0;
   let y = 0;
@@ -121,8 +117,14 @@ function makeGrid(rows, cols) {
 }
 
 function initGame() {
-  console.log(game)
+  addTimesInMilliseconds();
+
   makeGrid(game.grid.rows, game.grid.cols);
+
+  let avatar = game.avatar.element;
+  avatar.style.width = game.avatar.squareSize + "px";
+  avatar.style.height = game.avatar.squareSize + "px";
+  avatar.style.backgroundColor = game.avatar.color;
 
   game.gridNodes = document.querySelectorAll(".grid-item");
   let firstGridItem = document.querySelector(".grid-item");
@@ -133,7 +135,6 @@ function initGame() {
   game.root.style.setProperty('--circle-delay', `${game.time.circleDelay}ms`);
   game.root.style.setProperty('--game-time', `${game.time.total}ms`);
   game.root.style.setProperty('--countdown-height', `${game.time.countdown}vh`);
-
 
   timelineGen();
 
@@ -154,7 +155,10 @@ function gameState() {
 }
 
 function pauseGame(e) {
-  if(e.keyCode === game.keys.space) {
+  if(e.keyCode === game.keys.space || e === game.keys.space) {
+    if(window.name === game.settingWindow) {
+      channel.postMessage({action: "pause"})
+    }
     if (game.gameState === "paused") {
       game.gameState = "started"
       game.wall.style.animationPlayState = 'running'
@@ -239,12 +243,16 @@ function handleKey(e) {
   }
 
   let gridItem = document.querySelector(".grid-item-" + game.avatar.position.x + "-" + game.avatar.position.y);
-  gridItem.appendChild(avatar);
+  gridItem.appendChild(game.avatar.element);
 }
 
 function storeTarget(item) {
+  let target = item;
+  if(item.target) {
+    target = item.target
+  }
   if (game.zoneTarget.length < game.safeZoneWidth.length) {
-    game.zoneTarget.push(item.target);
+    game.zoneTarget.push(target);
   }
 }
 
@@ -266,8 +274,11 @@ function handleCirclePlacement(item) {
 
     game.wall.classList.add('closeCircle')
   }
-  game.wall.addEventListener("animationstart", playStartSound, false);
+  // game.wall.addEventListener("animationstart", function(){
+  //   playSound(game.sound.closing)
+  // }, false);
   placeCircle(item);
+  playSound(game.sound.closing);
 }
 
 function placeCircle(gridCell) {
@@ -278,8 +289,8 @@ function placeCircle(gridCell) {
   gridCell.classList.add("selected");
 }
 
-function playStartSound() {
-  var horn = new Audio(`./sounds/${game.sound.file}`);
+function playSound(sound) {
+  var horn = new Audio(`./sounds/${sound}`);
   horn.volume = game.sound.volume;
   horn.play();
 }
@@ -314,20 +325,55 @@ function getItemOffset(item) {
 
 window.addEventListener("keydown", handleKey);
 
-function checkDm() {
-  if (confirm("Are you a DM")) {
-    window.open('dmview.html', "_blank");
-  }
+function openSettings() {
+  window.open('dmview.html', game.settingWindow, "width=400,height=400");
 }
 
-// checkDm();
+const channel = new BroadcastChannel("wubg");
+
+if(window.name === game.settingWindow) {
+  game.grid.cellSize = 16;
+  game.avatar.squareSize = 10;
+}
+
+
+
+
 initGame();
 
+if(window.name === game.settingWindow) {
+  game.gridNodes.forEach(function(item) {
+    item.addEventListener("click", function(item) {
+      channel.postMessage({action: "place", target: item.target.classList[1]})
+    })
+  });
+}
 
+if(game.settings !== null) {
+  game.settings.addEventListener("click", openSettings);
+}
 window.addEventListener("keydown", pauseGame);
 game.gridNodes.forEach(function(item) {
   item.addEventListener("click", storeTarget);
 })
+
+
+channel.onmessage = function(e) {
+  console.log(e.data);
+  if (e.data.action === "pause") {
+    pauseGame(game.keys.space);
+  }
+  if (e.data.action === "place") {
+    let target = document.querySelector(`.${e.data.target}`)
+    storeTarget(target);
+  }
+}
+
+
+
+
+
+
 
 function CountDownTimer(duration, granularity) {
   this.duration = duration;
