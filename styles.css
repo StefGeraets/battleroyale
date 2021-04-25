@@ -5,8 +5,6 @@
   --closing-time: 5s;
   --circle-delay: 1s;
   --circle-width: 20;
-  /* --circle-width: calc(var(--initial-circle-width) * var(--cell-width)); */
-  /* --circle-height: calc(var(--initial-circle-width) * var(--cell-width)); */
   --start-width: 250vw;
   --start-top: 0;
   --start-left: 0;
@@ -16,6 +14,7 @@
   --countdown-height: 1vh;
   --monofont: "Source Code Pro";
   --font: "Source Sans Pro";
+  --show-timebar: none;
 }
 
 body {
@@ -117,6 +116,7 @@ body {
   height: 100%;
   background: rgba(255,255,255,20%);
   position: relative;
+  display: var(--show-timebar);
 }
 
 .timer {

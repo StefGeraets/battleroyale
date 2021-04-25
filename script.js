@@ -331,9 +331,12 @@ function openSettings() {
 
 const channel = new BroadcastChannel("wubg");
 
+
+
 if(window.name === game.settingWindow) {
-  game.grid.cellSize = 16;
-  game.avatar.squareSize = 10;
+  game.grid.cellSize = 24;
+  game.avatar.squareSize = 20;
+  game.root.style.setProperty("--show-timebar", "block");
 }
 
 
