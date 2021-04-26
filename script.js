@@ -226,7 +226,10 @@ function formatClock(minutes, seconds) {
 }
 
 function handleKey(e) {
-  switch (e.keyCode) {
+  if (window.name === game.settingWindow) {
+    channel.postMessage({action: "move", key: e.keyCode});
+  }
+  switch (e.keyCode || e) {
     case game.keys.left:
       game.avatar.position.y--;
       break;
@@ -326,7 +329,7 @@ function getItemOffset(item) {
 window.addEventListener("keydown", handleKey);
 
 function openSettings() {
-  window.open('dmview.html', game.settingWindow, "width=400,height=400");
+  window.open('dmview.html', game.settingWindow, "width=1080,height=800");
 }
 
 const channel = new BroadcastChannel("wubg");
@@ -362,13 +365,15 @@ game.gridNodes.forEach(function(item) {
 
 
 channel.onmessage = function(e) {
-  console.log(e.data);
   if (e.data.action === "pause") {
     pauseGame(game.keys.space);
   }
   if (e.data.action === "place") {
     let target = document.querySelector(`.${e.data.target}`)
     storeTarget(target);
+  }
+  if (e.data.action === "move") {
+    handleKey(e.data.key)
   }
 }
 
