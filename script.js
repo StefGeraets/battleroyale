@@ -48,7 +48,7 @@ const game = {
   gameState: "paused", // started || paused || ended
   zoneTarget: [],
   time: {
-    total: 1, // in minutes
+    total: 165, // in minutes
     current: 0, // in milliseconds
     circleClosing: 2000, // in milliseconds
     circleDelay: 2000, // in milliseconds
