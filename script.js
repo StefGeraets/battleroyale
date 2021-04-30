@@ -8,6 +8,7 @@ const game = {
     countdownTime: document.querySelector('.countdownTime'),
     settings: document.querySelector('.settings'),
     combatants: document.querySelector('.count'),
+    overlay: document.querySelector('.overlay'),
     gridNodes: "",
     root: document.documentElement,
   },
@@ -48,7 +49,7 @@ const game = {
   gameState: "paused", // started || paused || ended
   zoneTarget: [],
   time: {
-    total: 165, // in minutes
+    total: 1, // in minutes
     current: 0, // in milliseconds
     circleClosing: 2000, // in milliseconds
     circleDelay: 2000, // in milliseconds
@@ -341,6 +342,14 @@ function kill() {
   game.el.combatants.innerHTML = game.combatants.remaining
 }
 
+function toggleOverlay() {
+  if (window.name === game.settingWindow) {
+    channel.postMessage({action: "overlay"})
+  } else {
+    game.el.overlay.classList.toggle("show");
+  }
+}
+
 window.addEventListener("keydown", handleKey);
 
 function openSettings() {
@@ -397,6 +406,9 @@ channel.onmessage = function(e) {
   }
   if (e.data.action === "kill") {
     kill();
+  }
+  if (e.data.action === "overlay") {
+    toggleOverlay();
   }
 }
 
