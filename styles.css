@@ -15,6 +15,9 @@
   --monofont: "Source Code Pro";
   --font: "Source Sans Pro";
   --show-timebar: none;
+  --mouse-y: 0;
+  --mouse-x: 0;
+  --next-circle-width: var(--circle-width);
 }
 
 body {
@@ -30,18 +33,25 @@ body {
 }
 .map {
   background: rgb(7,89,133);
-  background: radial-gradient(circle, rgba(7,89,133,1) 0%, rgba(12,74,110,1) 100%);
+  background: radial-gradient(circle, rgba(7,89,133,1) 0%, rgb(12,74,110,1) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   overflow: hidden;
   flex: 0 0 100%;
+  position: relative;
 }
-/* .settings-wrapper {
+
+.dm-view .map {
+  flex: 0 0 80%;
+}
+.dm-view .settings-wrapper {
   flex: 0 0 20%;
   z-index: 10;
-} */
+  display: flex;
+  background: #0F172A;
+}
 .container {
   display: grid;
   grid-template-rows: repeat(var(--grid-rows), var(--cell-width));
@@ -68,6 +78,20 @@ body {
   width: calc(var(--circle-width) * var(--cell-width));
   height: calc(var(--circle-width) * var(--cell-width));
   pointer-events: none;
+}
+
+.placer {
+  content: "";
+  display: block;
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 50%);
+  border-radius: 600px;
+  width: calc(var(--next-circle-width) * var(--cell-width));
+  height: calc(var(--next-circle-width) * var(--cell-width));
+  pointer-events: none;
+  top: var(--mouse-y);
+  left: var(--mouse-x);
+  transform: translate(-50%, -50%);
 }
 
 .animated-wall {
@@ -113,8 +137,9 @@ body {
 
 .timebar {
   width: 20px;
+  min-width: 20px;
   height: 100%;
-  background: rgba(255,255,255,20%);
+  background: #475569;
   position: relative;
   display: var(--show-timebar);
 }
@@ -124,18 +149,18 @@ body {
   height: 1px;
   position: absolute;
   top: 0;
-  background: #000;
+  background: #F8FAFC;
   animation: gameTimer var(--game-time) linear forwards;
   animation-play-state: paused;
 }
 
 .timebar .timeblock:nth-child(3) {
-  border-top: 1px solid blue;
+  border-top: 1px solid #06B6D4;
 }
 
 .timebar .timeblock:nth-child(2n+4) {
-  background: red;
-  border-top: var(--countdown-height) solid green;
+  background: #DC2626;
+  border-top: var(--countdown-height) solid #16A34A;
 }
 
 @keyframes gameTimer {
@@ -175,7 +200,7 @@ body {
 .countdownWrapper .countdownTime {
   font-family: var(--monofont), monospace;
   font-size: 40px;
-  color: orange;
+  color: #F59E0B;
 }
 
 .settings {
@@ -196,9 +221,47 @@ body {
   height: 32px;
 }
 
-.channel-button {
+.countWrapper {
   position: absolute;
-  left: 16px;
-  bottom: 16px;
-  cursor: pointer;
+  right: 16px;
+  top: 16px;
+  text-align: right;
+  z-index: 10;
+}
+
+.playerCount {
+  font-size: 48px;
+  color: #fff;
+  line-height: 1;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.playerCount .count {
+  display: block;
+  font-size: 128px;
+  line-height: 0.8;
+  letter-spacing: -4px;
+}
+
+.killTicker {
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 10px rgba(0,0,0,80%), -2px -2px 10px rgba(0,0,0,80%);
+}
+
+.killTicker .killer {
+  color: #F59E0B;
+}
+
+.killTicker .killed {
+  color: #DC2626;
+}
+
+.setting-actions {
+  width: 100%;
+  text-align: center;
+  padding: 32px 0;
 }

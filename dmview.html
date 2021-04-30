@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-<body>
+<body class="dm-view">
   <!-- SCREEN
   height: 24
   width: 42
@@ -19,19 +19,35 @@
   MAP
   height: 22 
   width: 24 -->
-
-  <main class="map">
-    <div class="countdownWrapper">
-      <span class="title">Restrict in</span>
-      <span class="countdownTime">12:08</span>
-    </div>
-    <div class="container grid">
-    </div>
-    <div class="animated-wall"></div>
-    <div class="timebar">
-      <div class="timer"></div>
-    </div>
-  </main>
+  <div class="wrapper">
+    <main class="map">
+      <div class="countdownWrapper">
+        <span class="title">Restrict in</span>
+        <span class="countdownTime">12:08</span>
+      </div>
+      <div class="countWrapper">
+        <div class="playerCount">
+          <span class="count">100</span>
+          alive
+        </div>
+        <!-- <div class="killTicker">
+                <p><span class="killer">Credor of Arvil</span> liquified <span class="killed">Lucien</span></p>
+              </div> -->
+      </div>
+      <div class="container grid">
+      </div>
+      <div class="placer"></div>
+      <div class="animated-wall"></div>
+    </main>
+    <section class="settings-wrapper">
+      <div class="timebar">
+        <div class="timer"></div>
+      </div>
+      <div class="setting-actions">
+        <button onclick="kill()">Kill Rando</button>
+      </div>
+    </section>
+  </div>
   <script src="script.js"></script>
 </body>
 

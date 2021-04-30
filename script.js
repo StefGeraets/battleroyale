@@ -7,6 +7,7 @@ const game = {
     countdownWrapper: document.querySelector('.countdownWrapper'),
     countdownTime: document.querySelector('.countdownTime'),
     settings: document.querySelector('.settings'),
+    combatants: document.querySelector('.count'),
     gridNodes: "",
     root: document.documentElement,
   },
@@ -35,6 +36,10 @@ const game = {
     closing: "warhorn.mp3",
     ring: "trumpet.mp3",
     volume: 0.1,
+  },
+  combatants: {
+    total: 100,
+    remaining: 100
   },
   clickCount: 0,
   loop: "",
@@ -263,6 +268,7 @@ function storeTarget(item) {
 function handleCirclePlacement(item) {
   if (game.clickCount === 0) {
     placeWall(item);
+    game.el.root.style.setProperty('--next-circle-width', game.safeZoneWidth[game.clickCount + 1])
   } else if (game.clickCount < game.safeZoneWidth.length) {
     game.el.wall.classList.remove('closeCircle')
 
@@ -275,7 +281,7 @@ function handleCirclePlacement(item) {
     
     game.el.root.style.setProperty('--start-width', game.safeZoneWidth[game.clickCount - 1] * game.grid.cellSize + "px");
     game.el.root.style.setProperty('--circle-width', game.safeZoneWidth[game.clickCount]);
-
+    game.el.root.style.setProperty('--next-circle-width', game.safeZoneWidth[game.clickCount + 1])
     game.el.wall.classList.add('closeCircle')
   }
   // game.el.wall.addEventListener("animationstart", function(){
@@ -327,11 +333,27 @@ function getItemOffset(item) {
   };
 }
 
+function kill() {
+  if(window.name === game.settingWindow) {
+    channel.postMessage({action: "kill"})
+  }
+  game.combatants.remaining -= 1
+  game.el.combatants.innerHTML = game.combatants.remaining
+}
+
 window.addEventListener("keydown", handleKey);
 
 function openSettings() {
   window.open('dmview.html', game.settingWindow, "width=1080,height=800");
 }
+
+game.el.root.addEventListener('mousemove', e => { 
+  let x = e.pageX;
+  let y = e.pageY;
+
+  game.el.root.style.setProperty('--mouse-x', x + "px");
+  game.el.root.style.setProperty('--mouse-y', y + "px");
+});
 
 const channel = new BroadcastChannel("wubg");
 
@@ -372,6 +394,9 @@ channel.onmessage = function(e) {
   }
   if (e.data.action === "move") {
     handleKey(e.data.key)
+  }
+  if (e.data.action === "kill") {
+    kill();
   }
 }
 
