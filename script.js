@@ -13,11 +13,11 @@ const game = {
     root: document.documentElement,
   },
   keys: {
-    space: 32,
-    left: 37,
-    up: 38,
-    right: 39,
-    down: 40,
+    space: 'Space',
+    left: 'ArrowLeft',
+    up: 'ArrowUp',
+    right: 'ArrowRight',
+    down: 'ArrowDown',
   },
   token: {
     element: document.createElement("div"),
@@ -161,7 +161,7 @@ function gameState() {
 }
 
 function pauseGame(e) {
-  if(e.keyCode === game.keys.space || e === game.keys.space) {
+  if(e.code === game.keys.space || e === game.keys.space) {
     if(window.name === game.settingWindow) {
       channel.postMessage({action: "pause"})
     }
@@ -233,9 +233,9 @@ function formatClock(minutes, seconds) {
 
 function handleKey(e) {
   if (window.name === game.settingWindow) {
-    channel.postMessage({action: "move", key: e.keyCode});
+    channel.postMessage({action: "move", key: e.code});
   }
-  switch (e.keyCode || e) {
+  switch (e.code || e) {
     case game.keys.left:
       if (game.token.position.y === 0) return;
       game.token.position.y--;
