@@ -124,9 +124,6 @@ function makeGrid(rows, cols) {
     }
   }
 }
-if(window.name != game.settingWindow) {
-  game.el.overlay.classList.remove('show');
-}
 
 function initGame() {
   addTimesInMilliseconds();
