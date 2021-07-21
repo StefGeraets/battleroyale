@@ -13,6 +13,8 @@ const game = {
     pause: document.querySelector('.pauseIcon'),
     gridNodes: "",
     root: document.documentElement,
+    gameTimeInput: document.querySelector('[name="game-time"]'),
+    timerDisplay: document.querySelector('#timer-display'),
   },
   keys: {
     space: 'Space',
@@ -70,7 +72,11 @@ const game = {
   },
 }
 
-game.time.total = game.time.total * 60000;
+game.time.total = calculateMilliseconds(game.time.total);
+
+function calculateMilliseconds(minutes) {
+  return minutes * 60000;
+}
 
 function addTimesInMilliseconds() {
   let onePerc = game.time.total / 100
@@ -173,6 +179,7 @@ function gameState() {
   if (game.gameState !== "paused") {
     game.time.current += game.time.tickSpeed;
     updateMapState();
+    updateTimerDisplay();
   }
   
   if(game.time.current > game.time.total) {
@@ -520,3 +527,33 @@ CountDownTimer.parse = function(seconds) {
     'seconds': (seconds % 60) | 0
   };
 };
+
+function setGameTime() {
+  const value = game.el.gameTimeInput.value;
+
+  game.time.total = calculateMilliseconds(value);
+  setTimerDisplay();
+  initGame();
+};
+
+function setTimerDisplay() {
+  game.el.timerDisplay.textContent = formatTime(game.time.total);
+}
+
+function updateTimerDisplay() {
+
+  console.log(game.time.total - game.time.current);
+  game.el.timerDisplay.textContent = formatTime(game.time.total - game.time.current);
+}
+
+function formatTime(time) {
+  var seconds = Math.floor((time / 1000) % 60),
+    minutes = Math.floor((time / (1000 * 60)) % 60),
+    hours = Math.floor((time / (1000 * 60 * 60)) % 24);
+
+  hours = (hours < 10) ? "0" + hours : hours;
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+  return `${hours}:${minutes}:${seconds}`;
+}
