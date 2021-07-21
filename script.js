@@ -398,8 +398,12 @@ if(game.el.settings !== null) {
 }
 
 window.addEventListener("keydown", pauseGame);
-game.el.play.addEventListener("click", pauseGame(game.keys.pause))
-game.el.pause.addEventListener("click", pauseGame(game.keys.pause))
+game.el.play.addEventListener("click", () => {
+  pauseGame(game.keys.space);
+})
+game.el.pause.addEventListener("click", () => {
+  pauseGame(game.keys.space);
+})
 
 game.el.gridNodes.forEach(function(item) {
   item.addEventListener("click", storeTarget);
