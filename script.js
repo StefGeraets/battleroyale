@@ -117,10 +117,9 @@ function makeGrid(rows, cols) {
     
     game.el.container.appendChild(cell).className = "grid-item grid-item-" + x + "-" + y;
 
-    if (y === (rows - 1)) {
+    if (y === (rows -1)) {
       x++
     }
-
   }
 }
 
@@ -148,7 +147,6 @@ function initGame() {
 
   game.loop = setInterval(gameTimer, game.time.tickSpeed);
 }
-
 
 
 function gameState() {
@@ -239,15 +237,19 @@ function handleKey(e) {
   }
   switch (e.keyCode || e) {
     case game.keys.left:
+      if (game.token.position.y === 0) return;
       game.token.position.y--;
       break;
     case game.keys.up:
+      if (game.token.position.x === 0) return;
       game.token.position.x--;
       break;
     case game.keys.right:
+      if (game.token.position.y === game.grid.cols - 1) return;
       game.token.position.y++;
       break;
-    case game.keys.down:
+      case game.keys.down:
+      if (game.token.position.x === game.grid.rows - 1) return;
       game.token.position.x++;
       break;
     default: return
@@ -366,8 +368,6 @@ game.el.root.addEventListener('mousemove', e => {
 });
 
 const channel = new BroadcastChannel("wubg");
-
-
 
 if(window.name === game.settingWindow) {
   game.grid.cellSize = 24;
