@@ -9,6 +9,8 @@ const game = {
     settings: document.querySelector('.settings'),
     combatants: document.querySelector('.count'),
     overlay: document.querySelector('.overlay'),
+    play: document.querySelector('.play-icon'),
+    pause: document.querySelector('.pause-icon'),
     gridNodes: "",
     root: document.documentElement,
   },
@@ -165,6 +167,9 @@ function pauseGame(e) {
     if(window.name === game.settingWindow) {
       channel.postMessage({action: "pause"})
     }
+    game.el.pause.classList.toggle('show');
+    game.el.play.classList.toggle('show');
+
     if (game.gameState === "paused") {
       game.gameState = "started"
       game.el.wall.style.animationPlayState = 'running'
@@ -408,6 +413,13 @@ if(game.el.settings !== null) {
 }
 
 window.addEventListener("keydown", pauseGame);
+game.el.play.addEventListener("click", () => {
+  pauseGame(game.keys.space);
+})
+game.el.pause.addEventListener("click", () => {
+  pauseGame(game.keys.space);
+})
+
 game.el.gridNodes.forEach(function(item) {
   item.addEventListener("click", storeTarget);
 })
