@@ -114,12 +114,13 @@ function makeGrid(rows, cols) {
     let cell = document.createElement("div");
 
     y = c%cols;
+    
+    game.el.container.appendChild(cell).className = "grid-item grid-item-" + x + "-" + y;
 
     if (y === (rows - 1)) {
       x++
     }
 
-    game.el.container.appendChild(cell).className = "grid-item grid-item-" + x + "-" + y;
   }
 }
 
