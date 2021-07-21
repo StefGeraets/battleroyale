@@ -269,7 +269,25 @@ function storeTarget(item) {
   }
 }
 
+function calculateFallbackItem() {
+  // At zero clickcounts, we know for sure that only the center is a valid option
+  if (game.clickCount === 0) {
+    const center = document.querySelector(game.centerSelector);
+    game.zoneTarget.push(center);
+
+    return center;
+  }
+
+  // by checking array length - 1 we always return the previous zone-target
+  const item = game.zoneTarget[game.zoneTarget.length - 1];
+  game.zoneTarget.push(item);
+
+  return item ?? document.querySelector(game.centerSelector);
+}
+
 function handleCirclePlacement(item) {
+  item = item ?? calculateFallbackItem(); 
+
   if (game.clickCount === 0) {
     placeWall(item);
     game.el.root.style.setProperty('--next-circle-width', game.safeZoneWidth[game.clickCount + 1])
