@@ -13,8 +13,12 @@ const game = {
     pause: document.querySelector('.pauseIcon'),
     gridNodes: "",
     root: document.documentElement,
-    gameTimeInput: document.querySelector('[name="game-time"]'),
-    timerDisplay: document.querySelector('#timer-display'),
+    timer: {
+      gameTimeInput: document.querySelector('[name="game-time"]'),
+      timerDisplay: document.querySelector('#timer-display'),
+      timerSetButton: document.querySelector('.btn-timer-set'),
+      timerAlertMessage: document.querySelector('[data-already-started-alert]')
+    }
   },
   keys: {
     space: 'Space',
@@ -429,6 +433,7 @@ if(window.name === game.settingWindow) {
   game.el.root.style.setProperty("--show-timebar", "block");
 }
 
+setGameTime();
 initGame();
 
 window.addEventListener("keydown", handleKey);
@@ -529,7 +534,7 @@ CountDownTimer.parse = function(seconds) {
 };
 
 function setGameTime() {
-  const value = game.el.gameTimeInput.value;
+  const value = game.el.timer.gameTimeInput.value;
 
   game.time.total = calculateMilliseconds(value);
   setTimerDisplay();
@@ -537,13 +542,16 @@ function setGameTime() {
 };
 
 function setTimerDisplay() {
-  game.el.timerDisplay.textContent = formatTime(game.time.total);
+  game.el.timer.timerDisplay.textContent = formatTime(game.time.total);
 }
 
 function updateTimerDisplay() {
-
-  console.log(game.time.total - game.time.current);
-  game.el.timerDisplay.textContent = formatTime(game.time.total - game.time.current);
+  if (game.time.current > 0) {
+    game.el.timer.timerSetButton.setAttribute('disabled', 'disabled');
+    game.el.timer.gameTimeInput.setAttribute('disabled', 'disabled');
+    game.el.timer.timerAlertMessage.style.display = 'block';
+  }
+  game.el.timer.timerDisplay.textContent = formatTime(game.time.total - game.time.current);
 }
 
 function formatTime(time) {

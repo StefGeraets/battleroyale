@@ -53,8 +53,11 @@
             <label>Set gametime</label>
             <div class="input-button-group">
               <input name="game-time" type="number" placeholder="Game time in minutes" value="180">
-              <button onclick="setGameTime()">SET</button>
+              <button class="btn-timer-set" onclick="setGameTime()">SET</button>
             </div>
+            <span style="display: none; color: white;" data-already-started-alert>
+              Game has started, this cannot be changed anymore
+            </span>
           </div>
           <button onclick="toggleOverlay()">Toggle overlay</button>
           <button onclick="kill()">Kill Rando</button>
