@@ -270,6 +270,7 @@ function storeTarget(item) {
 }
 
 function handleCirclePlacement(item) {
+  item = item ?? document.querySelector(game.centerSelector);
   if (game.clickCount === 0) {
     placeWall(item);
     game.el.root.style.setProperty('--next-circle-width', game.safeZoneWidth[game.clickCount + 1])
