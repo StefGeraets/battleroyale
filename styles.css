@@ -115,7 +115,7 @@ body {
   transform: translate(-50%, -50%);
 }
 
-.animated-wall {
+.animatedWall {
   pointer-events: none;
   display: none;
   position: absolute;
