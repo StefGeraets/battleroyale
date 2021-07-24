@@ -282,7 +282,7 @@ body {
   color: #DC2626;
 }
 
-.setting-actions {
+.settingActions {
   width: 100%;
   text-align: center;
   display: flex;
@@ -290,12 +290,12 @@ body {
   justify-content: space-between;
 }
 
-.main-actions {
+.mainActions {
   flex: 1 0 0;
   padding: 16px;
 }
 
-.bottom-actions {
+.bottomActions {
   flex: 10% 0 0;
   display: flex;
   align-items: center;
@@ -304,8 +304,8 @@ body {
   color: #fff;
 }
 
-.play-icon,
-.pause-icon {
+.playIcon,
+.pauseIcon {
   display: none;
   cursor: pointer;
   padding: 8px;
@@ -313,13 +313,13 @@ body {
   height: 40px;
   transition: all 200ms ease;
 }
-.play-icon:hover,
-.pause-icon:hover {
+.playIcon:hover,
+.pauseIcon:hover {
   background: rgba(255,255,255,15%);
   border-radius: 40px;
 }
 
-.play-icon.show,
-.pause-icon.show {
+.playIcon.show,
+.pauseIcon.show {
   display: block;
 }
