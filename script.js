@@ -1,7 +1,7 @@
 const game = {
   el: {
     container: document.querySelector(".grid"),
-    wall: document.querySelector(".animated-wall"),
+    wall: document.querySelector(".animatedWall"),
     timer: document.querySelector(".timer"),
     timeBar: document.querySelector(".timebar"),
     countdownWrapper: document.querySelector('.countdownWrapper'),
@@ -9,8 +9,8 @@ const game = {
     settings: document.querySelector('.settings'),
     combatants: document.querySelector('.count'),
     overlay: document.querySelector('.overlay'),
-    play: document.querySelector('.play-icon'),
-    pause: document.querySelector('.pause-icon'),
+    play: document.querySelector('.playIcon'),
+    pause: document.querySelector('.pauseIcon'),
     gridNodes: "",
     root: document.documentElement,
   },
@@ -129,25 +129,43 @@ function initGame() {
   addTimesInMilliseconds();
 
   makeGrid(game.grid.rows, game.grid.cols);
-
-  let token = game.token.element;
-  token.style.width = game.token.size + "px";
-  token.style.height = game.token.size + "px";
-  token.style.backgroundColor = game.token.color;
-
-  game.el.gridNodes = document.querySelectorAll(".grid-item");
-  let firstGridItem = document.querySelector(".grid-item");
-  firstGridItem.appendChild(token);
-
-  game.centerSelector = `.grid-item-${game.grid.rows / 2}-${game.grid.cols / 2}`;
-  game.el.root.style.setProperty('--closing-time', `${game.time.circleClosing}ms`);
-  game.el.root.style.setProperty('--circle-delay', `${game.time.circleDelay}ms`);
-  game.el.root.style.setProperty('--game-time', `${game.time.total}ms`);
-  game.el.root.style.setProperty('--countdown-height', `${game.time.countdown}vh`);
+  generateToken();
+  setGridNodes();
+  setToken();
+  setCenterSelector();
+  setStartingStyles();
 
   timelineGen();
 
   game.loop = setInterval(gameTimer, game.time.tickSpeed);
+}
+
+function generateToken() {
+  let token = game.token.element;
+  token.style.width = game.token.size + "px";
+  token.style.height = game.token.size + "px";
+  token.style.backgroundColor = game.token.color;
+}
+
+function setGridNodes() {
+  game.el.gridNodes = document.querySelectorAll(".grid-item");
+}
+
+function setToken() {
+  let token = game.token.element;
+  let firstGridItem = document.querySelector(".grid-item");
+  firstGridItem.appendChild(token);
+}
+
+function setCenterSelector() {
+  game.centerSelector = `.grid-item-${game.grid.rows / 2}-${game.grid.cols / 2}`;
+}
+
+function setStartingStyles() {
+  game.el.root.style.setProperty('--closing-time', `${game.time.circleClosing}ms`);
+  game.el.root.style.setProperty('--circle-delay', `${game.time.circleDelay}ms`);
+  game.el.root.style.setProperty('--game-time', `${game.time.total}ms`);
+  game.el.root.style.setProperty('--countdown-height', `${game.time.countdown}vh`);
 }
 
 
@@ -166,20 +184,27 @@ function pauseGame(e) {
   if(e.code === game.keys.space || e === game.keys.space) {
     if(window.name === game.settingWindow) {
       channel.postMessage({action: "pause"})
+      togglePlayPauseButton();
     }
-    game.el.pause.classList.toggle('show');
-    game.el.play.classList.toggle('show');
 
     if (game.gameState === "paused") {
       game.gameState = "started"
-      game.el.wall.style.animationPlayState = 'running'
-      game.el.timer.style.animationPlayState = 'running'
+      setAnimationPlayState('running');
     } else {
       game.gameState = "paused"
-      game.el.wall.style.animationPlayState = 'paused'
-      game.el.timer.style.animationPlayState = 'paused'
+      setAnimationPlayState('paused');
     }
   }  
+}
+
+function togglePlayPauseButton() {
+  game.el.pause.classList.toggle('show');
+  game.el.play.classList.toggle('show');
+}
+
+function setAnimationPlayState(state) {
+  game.el.wall.style.animationPlayState = state;
+  game.el.timer.style.animationPlayState = state;
 }
 
 function gameTimer() {
@@ -376,7 +401,6 @@ function toggleOverlay() {
   }
 }
 
-window.addEventListener("keydown", handleKey);
 
 function openSettings() {
   window.open('dmview.html', game.settingWindow, "width=1080,height=800");
@@ -385,7 +409,7 @@ function openSettings() {
 game.el.root.addEventListener('mousemove', e => { 
   let x = e.pageX;
   let y = e.pageY;
-
+  
   game.el.root.style.setProperty('--mouse-x', x + "px");
   game.el.root.style.setProperty('--mouse-y', y + "px");
 });
@@ -400,29 +424,30 @@ if(window.name === game.settingWindow) {
 
 initGame();
 
+window.addEventListener("keydown", handleKey);
+window.addEventListener("keydown", pauseGame);
+
 if(window.name === game.settingWindow) {
   game.el.gridNodes.forEach(function(item) {
     item.addEventListener("click", function(item) {
       channel.postMessage({action: "place", target: item.target.classList[1]})
     })
   });
+  game.el.play.addEventListener("click", () => {
+    pauseGame(game.keys.space);
+  })
+  game.el.pause.addEventListener("click", () => {
+    pauseGame(game.keys.space);
+  })
 }
-
-if(game.el.settings !== null) {
-  game.el.settings.addEventListener("click", openSettings);
-}
-
-window.addEventListener("keydown", pauseGame);
-game.el.play.addEventListener("click", () => {
-  pauseGame(game.keys.space);
-})
-game.el.pause.addEventListener("click", () => {
-  pauseGame(game.keys.space);
-})
 
 game.el.gridNodes.forEach(function(item) {
   item.addEventListener("click", storeTarget);
 })
+
+if(game.el.settings !== null) {
+  game.el.settings.addEventListener("click", openSettings);
+}
 
 channel.onmessage = function(e) {
   if (e.data.action === "pause") {
