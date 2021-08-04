@@ -43,10 +43,14 @@ body {
   position: relative;
 }
 
+.dm-view {
+  --show-timebar: block;
+}
+
 .dm-view .map {
   flex: 0 0 80%;
 }
-.dm-view .settings-wrapper {
+.dm-view .settingsWrapper {
   flex: 0 0 20%;
   z-index: 10;
   display: flex;
