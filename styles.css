@@ -327,3 +327,30 @@ body {
 .pauseIcon.show {
   display: block;
 }
+
+.setting-actions .timer-display-holder {
+  color: white;
+  font-size: 24px; 
+}
+
+.setting-actions .timer-display-holder #timer-display {
+  color: #DC2626;
+}
+
+.setting-actions .form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.setting-actions .form-group label {
+  color: white
+}
+
+.setting-actions .form-group .input-button-group {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}

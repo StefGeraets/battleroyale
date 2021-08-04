@@ -48,6 +48,17 @@
       </div>
       <div class="settingActions">
         <div class="mainActions">
+          <span class="timer-display-holder">Gametime: <span id="timer-display">03:00:00</span></span>
+          <div class="form-group">
+            <label>Set gametime</label>
+            <div class="input-button-group">
+              <input name="game-time" type="number" placeholder="Game time in minutes" value="180">
+              <button class="btn-timer-set" onclick="setGameTime()">SET</button>
+            </div>
+            <span style="display: none; color: white;" data-already-started-alert>
+              Game has started, this cannot be changed anymore
+            </span>
+          </div>
           <button onclick="toggleOverlay()">Toggle overlay</button>
           <button onclick="kill()">Kill Rando</button>
         </div>
@@ -58,7 +69,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="playIcon show"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
           </div>
         </div>
-      </div>
     </section>
   </div>
   <script src="script.js"></script>
