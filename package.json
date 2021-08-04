@@ -1,0 +1,14 @@
+{
+  "name": "battleroyale",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/StefGeraets/battleroyale.git",
+  "author": "StefGeraets <stef.geraets@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "2.3.2"
+  },
+  "scripts": {
+    "prettier": "prettier --write ."
+  }
+}

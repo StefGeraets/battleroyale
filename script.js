@@ -4,22 +4,22 @@ const game = {
     wall: document.querySelector(".animated-wall"),
     timer: document.querySelector(".timer"),
     timeBar: document.querySelector(".timebar"),
-    countdownWrapper: document.querySelector('.countdownWrapper'),
-    countdownTime: document.querySelector('.countdownTime'),
-    settings: document.querySelector('.settings'),
-    combatants: document.querySelector('.count'),
-    overlay: document.querySelector('.overlay'),
-    play: document.querySelector('.play-icon'),
-    pause: document.querySelector('.pause-icon'),
+    countdownWrapper: document.querySelector(".countdownWrapper"),
+    countdownTime: document.querySelector(".countdownTime"),
+    settings: document.querySelector(".settings"),
+    combatants: document.querySelector(".count"),
+    overlay: document.querySelector(".overlay"),
+    play: document.querySelector(".playIcon"),
+    pause: document.querySelector(".pauseIcon"),
     gridNodes: "",
     root: document.documentElement,
   },
   keys: {
-    space: 'Space',
-    left: 'ArrowLeft',
-    up: 'ArrowUp',
-    right: 'ArrowRight',
-    down: 'ArrowDown',
+    space: "Space",
+    left: "ArrowLeft",
+    up: "ArrowUp",
+    right: "ArrowRight",
+    down: "ArrowDown",
   },
   token: {
     element: document.createElement("div"),
@@ -33,7 +33,7 @@ const game = {
   grid: {
     rows: 24,
     cols: 24,
-    cellSize: 32
+    cellSize: 32,
   },
   sound: {
     closing: "warhorn.mp3",
@@ -42,7 +42,7 @@ const game = {
   },
   combatants: {
     total: 100,
-    remaining: 100
+    remaining: 100,
   },
   clickCount: 0,
   loop: "",
@@ -66,14 +66,16 @@ const game = {
   mapState: "start",
   settingWindow: "dmSettings",
   f: {
-    increaseClick: function () { game.clickCount += 1},
+    increaseClick: function () {
+      game.clickCount += 1;
+    },
   },
-}
+};
 
 game.time.total = game.time.total * 60000;
 
 function addTimesInMilliseconds() {
-  let onePerc = game.time.total / 100
+  let onePerc = game.time.total / 100;
   let order = [
     game.time.beforeStart,
     game.time.beforeNextZone[0],
@@ -84,21 +86,21 @@ function addTimesInMilliseconds() {
     game.time.countdown + game.time.restrictingPerc,
     game.time.beforeNextZone[3],
     game.time.countdown + game.time.restrictingPerc,
-  ]
+  ];
 
   game.time.startPercent = order;
 
   for (let i = 0; i < order.length; i++) {
     let ms = order[i] * onePerc;
-    
+
     let amount = 0;
     if (game.time.startTimes.length) {
       amount = game.time.startTimes[game.time.startTimes.length - 1];
     }
-    
+
     amount += ms;
-    
-    game.time.startTimes.push(amount)
+
+    game.time.startTimes.push(amount);
   }
 
   game.time.circleClosing = game.time.restrictingPerc * onePerc;
@@ -115,12 +117,13 @@ function makeGrid(rows, cols) {
   for (let c = 0; c < rows * cols; c++) {
     let cell = document.createElement("div");
 
-    y = c%cols;
-    
-    game.el.container.appendChild(cell).className = "grid-item grid-item-" + x + "-" + y;
+    y = c % cols;
 
-    if (y === (rows -1)) {
-      x++
+    game.el.container.appendChild(cell).className =
+      "grid-item grid-item-" + x + "-" + y;
+
+    if (y === rows - 1) {
+      x++;
     }
   }
 }
@@ -139,47 +142,66 @@ function initGame() {
   let firstGridItem = document.querySelector(".grid-item");
   firstGridItem.appendChild(token);
 
-  game.centerSelector = `.grid-item-${game.grid.rows / 2}-${game.grid.cols / 2}`;
-  game.el.root.style.setProperty('--closing-time', `${game.time.circleClosing}ms`);
-  game.el.root.style.setProperty('--circle-delay', `${game.time.circleDelay}ms`);
-  game.el.root.style.setProperty('--game-time', `${game.time.total}ms`);
-  game.el.root.style.setProperty('--countdown-height', `${game.time.countdown}vh`);
-
-  timelineGen();
-
-  game.loop = setInterval(gameTimer, game.time.tickSpeed);
+function setCenterSelector() {
+  game.centerSelector = `.grid-item-${game.grid.rows / 2}-${
+    game.grid.cols / 2
+  }`;
 }
 
+function setStartingStyles() {
+  game.el.root.style.setProperty(
+    "--closing-time",
+    `${game.time.circleClosing}ms`
+  );
+  game.el.root.style.setProperty(
+    "--circle-delay",
+    `${game.time.circleDelay}ms`
+  );
+  game.el.root.style.setProperty("--game-time", `${game.time.total}ms`);
+  game.el.root.style.setProperty(
+    "--countdown-height",
+    `${game.time.countdown}vh`
+  );
+}
 
 function gameState() {
   if (game.gameState !== "paused") {
     game.time.current += game.time.tickSpeed;
     updateMapState();
   }
-  
-  if(game.time.current > game.time.total) {
+
+  if (game.time.current > game.time.total) {
     clearInterval(game.loop);
   }
 }
 
 function pauseGame(e) {
-  if(e.code === game.keys.space || e === game.keys.space) {
-    if(window.name === game.settingWindow) {
-      channel.postMessage({action: "pause"})
+  if (e.code === game.keys.space || e === game.keys.space) {
+    if (window.name === game.settingWindow) {
+      channel.postMessage({ action: "pause" });
+      togglePlayPauseButton();
     }
     game.el.pause.classList.toggle('show');
     game.el.play.classList.toggle('show');
 
     if (game.gameState === "paused") {
-      game.gameState = "started"
-      game.el.wall.style.animationPlayState = 'running'
-      game.el.timer.style.animationPlayState = 'running'
+      game.gameState = "started";
+      setAnimationPlayState("running");
     } else {
-      game.gameState = "paused"
-      game.el.wall.style.animationPlayState = 'paused'
-      game.el.timer.style.animationPlayState = 'paused'
+      game.gameState = "paused";
+      setAnimationPlayState("paused");
     }
-  }  
+  }
+}
+
+function togglePlayPauseButton() {
+  game.el.pause.classList.toggle("show");
+  game.el.play.classList.toggle("show");
+}
+
+function setAnimationPlayState(state) {
+  game.el.wall.style.animationPlayState = state;
+  game.el.timer.style.animationPlayState = state;
 }
 
 function gameTimer() {
@@ -188,34 +210,63 @@ function gameTimer() {
 
 function updateMapState() {
   let state = game.mapState;
-  if (game.time.current == game.time.startTimes[8]) { state = "end" }
-  if (game.time.current == game.time.startTimes[7]) { state = "zone 4"; handleCirclePlacement(game.zoneTarget[game.clickCount]); countdownClock();}
-  if (game.time.current == game.time.startTimes[6]) { state = "idle 4"; game.f.increaseClick(); }
-  if (game.time.current == game.time.startTimes[5]) { state = "zone 3"; handleCirclePlacement(game.zoneTarget[game.clickCount]); countdownClock();}
-  if (game.time.current == game.time.startTimes[4]) { state = "idle 3"; game.f.increaseClick(); }
-  if (game.time.current == game.time.startTimes[3]) { state = "zone 2"; handleCirclePlacement(game.zoneTarget[game.clickCount]); countdownClock();}
-  if (game.time.current == game.time.startTimes[2]) { state = "idle 2"; game.f.increaseClick(); }
-  if (game.time.current == game.time.startTimes[1]) { state = "zone 1"; handleCirclePlacement(game.zoneTarget[game.clickCount]); countdownClock(); }
-  if (game.time.current == game.time.startTimes[0]) { state = "idle 1"  }
-  
+  if (game.time.current == game.time.startTimes[8]) {
+    state = "end";
+  }
+  if (game.time.current == game.time.startTimes[7]) {
+    state = "zone 4";
+    handleCirclePlacement(game.zoneTarget[game.clickCount]);
+    countdownClock();
+  }
+  if (game.time.current == game.time.startTimes[6]) {
+    state = "idle 4";
+    game.f.increaseClick();
+  }
+  if (game.time.current == game.time.startTimes[5]) {
+    state = "zone 3";
+    handleCirclePlacement(game.zoneTarget[game.clickCount]);
+    countdownClock();
+  }
+  if (game.time.current == game.time.startTimes[4]) {
+    state = "idle 3";
+    game.f.increaseClick();
+  }
+  if (game.time.current == game.time.startTimes[3]) {
+    state = "zone 2";
+    handleCirclePlacement(game.zoneTarget[game.clickCount]);
+    countdownClock();
+  }
+  if (game.time.current == game.time.startTimes[2]) {
+    state = "idle 2";
+    game.f.increaseClick();
+  }
+  if (game.time.current == game.time.startTimes[1]) {
+    state = "zone 1";
+    handleCirclePlacement(game.zoneTarget[game.clickCount]);
+    countdownClock();
+  }
+  if (game.time.current == game.time.startTimes[0]) {
+    state = "idle 1";
+  }
+
   game.mapState = state;
 }
 
-function timelineGen() { 
-  game.time.startPercent.forEach(timeBlock => {
-    let time = document.createElement('div');
-    time.classList.add('timeblock');
-    time.style.height = `${timeBlock}vh`
+function timelineGen() {
+  game.time.startPercent.forEach((timeBlock) => {
+    let time = document.createElement("div");
+    time.classList.add("timeblock");
+    time.style.height = `${timeBlock}vh`;
     game.el.timeBar.appendChild(time);
-  })
+  });
 }
 
 function countdownClock() {
-  let countdownSeconds = (game.time.circleDelay / 1000 | 0)
+  let countdownSeconds = (game.time.circleDelay / 1000) | 0;
 
   var timer = new CountDownTimer(countdownSeconds),
-      timeObj = CountDownTimer.parse(countdownSeconds);
-  
+    timeObj = CountDownTimer.parse(countdownSeconds);
+
   formatClock(timeObj.minutes, timeObj.seconds);
 
   game.el.countdownWrapper.classList.add("show");
@@ -225,7 +276,7 @@ function countdownClock() {
 function removeClock() {
   if (this.expired()) {
     setTimeout(() => {
-      game.el.countdownWrapper.classList.remove('show')
+      game.el.countdownWrapper.classList.remove("show");
     }, 1000);
   }
 }
@@ -238,7 +289,7 @@ function formatClock(minutes, seconds) {
 
 function handleKey(e) {
   if (window.name === game.settingWindow) {
-    channel.postMessage({action: "move", key: e.code});
+    channel.postMessage({ action: "move", key: e.code });
   }
   switch (e.code || e) {
     case game.keys.left:
@@ -253,21 +304,24 @@ function handleKey(e) {
       if (game.token.position.y === game.grid.cols - 1) return;
       game.token.position.y++;
       break;
-      case game.keys.down:
+    case game.keys.down:
       if (game.token.position.x === game.grid.rows - 1) return;
       game.token.position.x++;
       break;
-    default: return
+    default:
+      return;
   }
 
-  let gridItem = document.querySelector(".grid-item-" + game.token.position.x + "-" + game.token.position.y);
+  let gridItem = document.querySelector(
+    ".grid-item-" + game.token.position.x + "-" + game.token.position.y
+  );
   gridItem.appendChild(game.token.element);
 }
 
 function storeTarget(item) {
   let target = item;
-  if(item.target) {
-    target = item.target
+  if (item.target) {
+    target = item.target;
   }
   if (game.zoneTarget.length < game.safeZoneWidth.length) {
     game.zoneTarget.push(target);
@@ -291,25 +345,37 @@ function calculateFallbackItem() {
 }
 
 function handleCirclePlacement(item) {
-  item = item ?? calculateFallbackItem(); 
+  item = item ?? calculateFallbackItem();
 
   if (game.clickCount === 0) {
     placeWall(item);
-    game.el.root.style.setProperty('--next-circle-width', game.safeZoneWidth[game.clickCount + 1])
+    game.el.root.style.setProperty(
+      "--next-circle-width",
+      game.safeZoneWidth[game.clickCount + 1]
+    );
   } else if (game.clickCount < game.safeZoneWidth.length) {
-    game.el.wall.classList.remove('closeCircle')
+    game.el.wall.classList.remove("closeCircle");
 
     let startTop = game.el.root.style.getPropertyValue("--end-top");
     let startLeft = game.el.root.style.getPropertyValue("--end-left");
     let pos = getItemOffset(item);
-  
+
     setWallStartPosition(startTop, startLeft);
     setWallEndPosition(pos.top, pos.left);
-    
-    game.el.root.style.setProperty('--start-width', game.safeZoneWidth[game.clickCount - 1] * game.grid.cellSize + "px");
-    game.el.root.style.setProperty('--circle-width', game.safeZoneWidth[game.clickCount]);
-    game.el.root.style.setProperty('--next-circle-width', game.safeZoneWidth[game.clickCount + 1])
-    game.el.wall.classList.add('closeCircle')
+
+    game.el.root.style.setProperty(
+      "--start-width",
+      game.safeZoneWidth[game.clickCount - 1] * game.grid.cellSize + "px"
+    );
+    game.el.root.style.setProperty(
+      "--circle-width",
+      game.safeZoneWidth[game.clickCount]
+    );
+    game.el.root.style.setProperty(
+      "--next-circle-width",
+      game.safeZoneWidth[game.clickCount + 1]
+    );
+    game.el.wall.classList.add("closeCircle");
   }
   // game.el.wall.addEventListener("animationstart", function(){
   //   playSound(game.sound.closing)
@@ -319,9 +385,9 @@ function handleCirclePlacement(item) {
 }
 
 function placeCircle(gridCell) {
-  game.el.gridNodes.forEach(function(gridItem) {
-    gridItem.classList.remove("selected")
-  })
+  game.el.gridNodes.forEach(function (gridItem) {
+    gridItem.classList.remove("selected");
+  });
 
   gridCell.classList.add("selected");
 }
@@ -334,11 +400,11 @@ function playSound(sound) {
 
 function placeWall(item) {
   const offset = getItemOffset(item);
-  
+
   setWallStartPosition(offset.top, offset.left);
   setWallEndPosition(offset.top, offset.left);
-  
-  game.el.wall.classList.add('closeCircle')
+
+  game.el.wall.classList.add("closeCircle");
 }
 
 function setWallStartPosition(top, left) {
@@ -355,44 +421,42 @@ function setWallEndPosition(top, left) {
 
 function getItemOffset(item) {
   return {
-    top: item.offsetTop + (game.grid.cellSize / 2),
-    left: item.offsetLeft + (game.grid.cellSize / 2),
+    top: item.offsetTop + game.grid.cellSize / 2,
+    left: item.offsetLeft + game.grid.cellSize / 2,
   };
 }
 
 function kill() {
-  if(window.name === game.settingWindow) {
-    channel.postMessage({action: "kill"})
+  if (window.name === game.settingWindow) {
+    channel.postMessage({ action: "kill" });
   }
-  game.combatants.remaining -= 1
-  game.el.combatants.innerHTML = game.combatants.remaining
+  game.combatants.remaining -= 1;
+  game.el.combatants.innerHTML = game.combatants.remaining;
 }
 
 function toggleOverlay() {
   if (window.name === game.settingWindow) {
-    channel.postMessage({action: "overlay"})
+    channel.postMessage({ action: "overlay" });
   } else {
     game.el.overlay.classList.toggle("show");
   }
 }
 
-window.addEventListener("keydown", handleKey);
-
 function openSettings() {
-  window.open('dmview.html', game.settingWindow, "width=1080,height=800");
+  window.open("dmview.html", game.settingWindow, "width=1080,height=800");
 }
 
-game.el.root.addEventListener('mousemove', e => { 
+game.el.root.addEventListener("mousemove", (e) => {
   let x = e.pageX;
   let y = e.pageY;
 
-  game.el.root.style.setProperty('--mouse-x', x + "px");
-  game.el.root.style.setProperty('--mouse-y', y + "px");
+  game.el.root.style.setProperty("--mouse-x", x + "px");
+  game.el.root.style.setProperty("--mouse-y", y + "px");
 });
 
 const channel = new BroadcastChannel("wubg");
 
-if(window.name === game.settingWindow) {
+if (window.name === game.settingWindow) {
   game.grid.cellSize = 24;
   game.token.size = 20;
   game.el.root.style.setProperty("--show-timebar", "block");
@@ -400,40 +464,44 @@ if(window.name === game.settingWindow) {
 
 initGame();
 
-if(window.name === game.settingWindow) {
-  game.el.gridNodes.forEach(function(item) {
-    item.addEventListener("click", function(item) {
-      channel.postMessage({action: "place", target: item.target.classList[1]})
-    })
+window.addEventListener("keydown", handleKey);
+window.addEventListener("keydown", pauseGame);
+
+if (window.name === game.settingWindow) {
+  game.el.gridNodes.forEach(function (item) {
+    item.addEventListener("click", function (item) {
+      channel.postMessage({
+        action: "place",
+        target: item.target.classList[1],
+      });
+    });
+  });
+  game.el.play.addEventListener("click", () => {
+    pauseGame(game.keys.space);
+  });
+  game.el.pause.addEventListener("click", () => {
+    pauseGame(game.keys.space);
   });
 }
 
-if(game.el.settings !== null) {
+game.el.gridNodes.forEach(function (item) {
+  item.addEventListener("click", storeTarget);
+});
+
+if (game.el.settings !== null) {
   game.el.settings.addEventListener("click", openSettings);
 }
 
-window.addEventListener("keydown", pauseGame);
-game.el.play.addEventListener("click", () => {
-  pauseGame(game.keys.space);
-})
-game.el.pause.addEventListener("click", () => {
-  pauseGame(game.keys.space);
-})
-
-game.el.gridNodes.forEach(function(item) {
-  item.addEventListener("click", storeTarget);
-})
-
-channel.onmessage = function(e) {
+channel.onmessage = function (e) {
   if (e.data.action === "pause") {
     pauseGame(game.keys.space);
   }
   if (e.data.action === "place") {
-    let target = document.querySelector(`.${e.data.target}`)
+    let target = document.querySelector(`.${e.data.target}`);
     storeTarget(target);
   }
   if (e.data.action === "move") {
-    handleKey(e.data.key)
+    handleKey(e.data.key);
   }
   if (e.data.action === "kill") {
     kill();
@@ -441,8 +509,7 @@ channel.onmessage = function(e) {
   if (e.data.action === "overlay") {
     toggleOverlay();
   }
-}
-
+};
 
 // Countdown Clock: Credits robbmj https://stackoverflow.com/questions/20618355/how-to-write-a-countdown-timer-in-javascript
 function CountDownTimer(duration, granularity) {
@@ -452,14 +519,15 @@ function CountDownTimer(duration, granularity) {
   this.running = false;
 }
 
-CountDownTimer.prototype.start = function() {
+CountDownTimer.prototype.start = function () {
   if (this.running) {
     return;
   }
   this.running = true;
   var start = Date.now(),
-      that = this,
-      diff, obj;
+    that = this,
+    diff,
+    obj;
 
   (function timer() {
     diff = that.duration - (((Date.now() - start) / 1000) | 0);
@@ -472,26 +540,26 @@ CountDownTimer.prototype.start = function() {
     }
 
     obj = CountDownTimer.parse(diff);
-    that.tickFtns.forEach(function(ftn) {
+    that.tickFtns.forEach(function (ftn) {
       ftn.call(this, obj.minutes, obj.seconds);
     }, that);
-  }());
+  })();
 };
 
-CountDownTimer.prototype.onTick = function(ftn) {
-  if (typeof ftn === 'function') {
+CountDownTimer.prototype.onTick = function (ftn) {
+  if (typeof ftn === "function") {
     this.tickFtns.push(ftn);
   }
   return this;
 };
 
-CountDownTimer.prototype.expired = function() {
+CountDownTimer.prototype.expired = function () {
   return !this.running;
 };
 
-CountDownTimer.parse = function(seconds) {
+CountDownTimer.parse = function (seconds) {
   return {
-    'minutes': (seconds / 60) | 0,
-    'seconds': (seconds % 60) | 0
+    minutes: (seconds / 60) | 0,
+    seconds: seconds % 60 | 0,
   };
 };

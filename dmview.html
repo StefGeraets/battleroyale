@@ -1,67 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>DM view</title>
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  <title>DM view</title>
-  <link rel="stylesheet" href="reset.css">
-  <link rel="stylesheet" href="styles.css">
-</head>
-
-<body class="dm-view">
-  <!-- SCREEN
+  <body class="dm-view">
+    <!-- SCREEN
   height: 24
   width: 42
   
   MAP
   height: 22 
   width: 24 -->
-  <div class="wrapper">
-    <main class="map">
-      <div class="countdownWrapper">
-        <span class="title">Restrict in</span>
-        <span class="countdownTime">12:08</span>
-      </div>
-      <div class="countWrapper">
-        <div class="playerCount">
-          <span class="count">100</span>
-          alive
+    <div class="wrapper">
+      <main class="map">
+        <div class="countdownWrapper">
+          <span class="title">Restrict in</span>
+          <span class="countdownTime">12:08</span>
         </div>
-        <!-- <div class="killTicker">
+        <div class="countWrapper">
+          <div class="playerCount">
+            <span class="count">100</span>
+            alive
+          </div>
+          <!-- <div class="killTicker">
                 <p><span class="killer">Credor of Arvil</span> liquified <span class="killed">Lucien</span></p>
               </div> -->
-      </div>
-      <div class="container grid">
-      </div>
-      <div class="placer"></div>
-      <div class="animated-wall"></div>
-      <div class="playstate">
-        
-      </div>
-    </main>
-    <section class="settings-wrapper">
-      <div class="timebar">
-        <div class="timer"></div>
-      </div>
-      <div class="setting-actions">
-        <div class="main-actions">
-          <button onclick="toggleOverlay()">Toggle overlay</button>
-          <button onclick="kill()">Kill Rando</button>
         </div>
+        <div class="container grid"></div>
+        <div class="placer"></div>
+        <div class="animatedWall"></div>
+        <div class="playstate"></div>
+      </main>
+      <section class="settingsWrapper">
+        <div class="timebar">
+          <div class="timer"></div>
+        </div>
+        <div class="settingActions">
+          <div class="mainActions">
+            <button onclick="toggleOverlay()">Toggle overlay</button>
+            <button onclick="kill()">Kill Rando</button>
+          </div>
 
-        <div class="bottom-actions">
-          <div class="game-state">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pause-icon"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="play-icon show"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          <div class="bottomActions">
+            <div class="gameState">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="pauseIcon"
+              >
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="playIcon show"
+              >
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  </div>
-  <script src="script.js"></script>
-</body>
-
+      </section>
+    </div>
+    <script src="script.js"></script>
+  </body>
 </html>
