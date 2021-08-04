@@ -203,7 +203,6 @@ function togglePlayPauseButton() {
 }
 
 function setAnimationPlayState(state) {
-  console.log(state);
   game.el.wall.style.animationPlayState = state;
   game.el.timer.style.animationPlayState = state;
 }
